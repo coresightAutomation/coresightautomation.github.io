@@ -632,7 +632,7 @@
   function closeModalOutside(e) { if (e.target === document.getElementById("contactModal")) closeModal(); }
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
   function submitForm() {
-    var WEB3FORMS_KEY = "YOUR_ACCESS_KEY_HERE";
+    var WEB3FORMS_KEY = "f062341b-781c-4e05-8794-9eb2e2329a96";
     var b = document.querySelector(".modal-body"), t = b.querySelectorAll("input[type=text]");
     var name = t[0].value.trim(), company = t[1].value.trim(), email = b.querySelector("input[type=email]").value.trim();
     var phone = b.querySelector("input[type=tel]").value.trim(), service = b.querySelector("select").value, detail = b.querySelector("textarea").value.trim();
