@@ -644,7 +644,6 @@
       var body = "Name: " + name + "\nCompany: " + company + "\nEmail: " + email + "\nPhone: " + phone + "\nService: " + service + "\n\nDetails:\n" + detail;
       window.location.href = "mailto:Support@Coresightautomation.com?subject=" + encodeURIComponent("CoreSight Inquiry: " + service) + "&body=" + encodeURIComponent(body);
     };
-    if (WEB3FORMS_KEY === "f062341b-781c-4e05-8794-9eb2e2329a96") { mailFallback(); return; }
     btn.disabled = true; btn.textContent = "Sending..."; msg.textContent = "";
     fetch("https://api.web3forms.com/submit", {
       method: "POST",
