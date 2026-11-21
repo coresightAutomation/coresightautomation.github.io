@@ -439,7 +439,9 @@
         </select>
       </div>
       <div class="form-row"><label>Project Details &amp; Inquiry *</label><textarea placeholder="Describe your project, data volumes, deadlines, and any specific requirements..."></textarea></div>
-      <button class="btn-submit" onclick="submitForm()">Send Inquiry</button>
+      <input type="checkbox" id="botcheck" tabindex="-1" autocomplete="off" style="display:none">
+      <button class="btn-submit" id="sendBtn" onclick="submitForm()">Send Inquiry</button>
+      <p class="form-note" id="formMsg" role="status" style="font-weight:600"></p>
       <p class="form-note">Or email us directly at <a href="mailto:Support@Coresightautomation.com" style="color:var(--blue-l)">Support@Coresightautomation.com</a></p>
     </div>
   </div>
@@ -628,14 +630,31 @@
   function closeModalOutside(e) { if (e.target === document.getElementById("contactModal")) closeModal(); }
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
   function submitForm() {
-    var name = document.querySelector(".modal-body input[type=text]").value.trim();
-    var email = document.querySelector(".modal-body input[type=email]").value.trim();
-    var service = document.querySelector(".modal-body select").value;
-    var detail = document.querySelector(".modal-body textarea").value.trim();
-    if (!name || !email || !service || !detail) { alert("Please fill in all required fields before submitting."); return; }
-    var subject = encodeURIComponent("CoreSight Inquiry: " + service);
-    var body = encodeURIComponent("Name: " + name + "\nEmail: " + email + "\nService: " + service + "\n\nDetails:\n" + detail);
-    window.location.href = "mailto:Support@Coresightautomation.com?subject=" + subject + "&body=" + body;
+    var WEB3FORMS_KEY = "YOUR_ACCESS_KEY_HERE";
+    var b = document.querySelector(".modal-body"), t = b.querySelectorAll("input[type=text]");
+    var name = t[0].value.trim(), company = t[1].value.trim(), email = b.querySelector("input[type=email]").value.trim();
+    var phone = b.querySelector("input[type=tel]").value.trim(), service = b.querySelector("select").value, detail = b.querySelector("textarea").value.trim();
+    var msg = document.getElementById("formMsg"), btn = document.getElementById("sendBtn");
+    msg.style.color = "#b42318";
+    if (!name || !email || !service || !detail) { msg.textContent = "Please fill in all required fields."; return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg.textContent = "Please enter a valid email address."; return; }
+    var mailFallback = function () {
+      var body = "Name: " + name + "\nCompany: " + company + "\nEmail: " + email + "\nPhone: " + phone + "\nService: " + service + "\n\nDetails:\n" + detail;
+      window.location.href = "mailto:Support@Coresightautomation.com?subject=" + encodeURIComponent("CoreSight Inquiry: " + service) + "&body=" + encodeURIComponent(body);
+    };
+    if (WEB3FORMS_KEY === "f062341b-781c-4e05-8794-9eb2e2329a96") { mailFallback(); return; }
+    btn.disabled = true; btn.textContent = "Sending..."; msg.textContent = "";
+    fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ access_key: WEB3FORMS_KEY, subject: "CoreSight Inquiry: " + service, from_name: "CoreSight Website", name: name, company: company, email: email, phone: phone, service: service, message: detail, botcheck: document.getElementById("botcheck").checked })
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d.success) throw new Error("failed");
+      b.innerHTML = '<div style="text-align:center;padding:28px 8px"><div style="width:56px;height:56px;border-radius:50%;background:#12b093;color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 18px">&#10003;</div><h3 style="font-family:var(--fs);font-weight:400;font-size:1.5rem;color:var(--navy);margin-bottom:8px">Thank you, ' + name.replace(/[<>&"]/g, "") + '</h3><p style="color:var(--slate);line-height:1.7">We have received your request and will get back to you within 24 hours.</p></div>';
+    }).catch(function () {
+      btn.disabled = false; btn.textContent = "Send Inquiry";
+      msg.innerHTML = 'Could not send right now. Please email us at <a href="mailto:Support@Coresightautomation.com" style="color:#2572c8">Support@Coresightautomation.com</a>.';
+    });
   }
   const nav = document.getElementById("nav");
   window.addEventListener("scroll", () => nav.classList.toggle("scrolled", window.scrollY > 40));
