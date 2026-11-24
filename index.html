@@ -450,6 +450,60 @@
     .cs-industry-card:focus-visible,.nav-drop-trigger:focus-visible{outline:3px solid var(--gold-l);outline-offset:4px}
     @media(max-width:600px){.nav-dropdown{width:100%}.nav-drop-trigger{font-size:.95rem;padding:0}.nav-drop-menu{position:static;box-shadow:none;margin-top:8px;min-width:0}.nav-dropdown.open .nav-drop-menu{display:block}}
   </style>
+<style>/* hero workflow rotator */
+.csx{width:100%;max-width:580px;font-family:'DM Sans',sans-serif;color:#fff;background:rgba(22,45,74,.75);border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:20px 22px 18px}
+.csx-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.csx-title{font-size:.72rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#9bc9f4}
+.csx-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.csx-tab{position:relative;font:500 .8rem 'DM Sans',sans-serif;color:rgba(255,255,255,.6);background:none;border:0;padding:6px 10px 9px;cursor:pointer;transition:color .2s}
+.csx-tab:hover{color:#fff}
+.csx-tab:after{content:'';position:absolute;left:10px;right:10px;bottom:2px;height:2px;border-radius:2px;background:rgba(255,255,255,.14)}
+.csx-tab:before{content:'';position:absolute;left:10px;bottom:2px;height:2px;border-radius:2px;background:#f0b429;width:0;z-index:1}
+.csx-tab.on{color:#fff}
+.csx-tab.on:before{animation:csx-fill var(--csx-t,4800ms) linear forwards}
+.csx.paused .csx-tab.on:before{animation-play-state:paused}
+@keyframes csx-fill{from{width:0}to{width:calc(100% - 20px)}}
+.csx-stage{perspective:1400px}
+.csx-inner{display:grid;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.45,.05,.2,1)}
+.csx-face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#0d1f35;border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px}
+.csx-face.back{transform:rotateY(180deg)}
+.csx-ind{font-size:.78rem;font-weight:700;color:#f0b429;letter-spacing:.06em;text-transform:uppercase;margin:0 0 12px}
+.csx-body{display:grid;grid-template-columns:1fr 60px 1fr;align-items:center;gap:6px}
+.csx-lbl{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 8px}
+.csx-col{display:flex;flex-direction:column;gap:8px}
+.csx-item{display:flex;align-items:center;gap:10px;min-height:42px;padding:9px 12px;border-radius:10px;font-size:.84rem;font-weight:500;line-height:1.25}
+.csx-in .csx-item{background:#fff;color:#0d1f35}
+.csx-out .csx-item{background:#e8f6f1;color:#06382e;border:1px solid #9fe1cb}
+.csx-item svg{flex:none;width:17px;height:17px}
+.csx-in svg{color:#c98a12}
+.csx-out svg{color:#0e8a72}
+.csx-mid{display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:22px}
+.csx-gear{width:46px;height:46px;border-radius:50%;background:#162d4a;border:1px solid #14b89a;display:flex;align-items:center;justify-content:center;color:#14b89a}
+.csx-gear svg{width:21px;height:21px;animation:csx-spin 6s linear infinite}
+@keyframes csx-spin{to{transform:rotate(360deg)}}
+.csx-mid small{font-size:.66rem;letter-spacing:.06em;color:#c9e2ff}
+.csx-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12)}
+.csx-steps{display:flex;gap:14px;font-size:.8rem;font-weight:600;color:rgba(255,255,255,.45)}
+.csx-steps span{transition:color .3s}
+.csx-steps span.done{color:#fff}
+.csx-steps span.done:after{content:' \2713';color:#14b89a}
+.csx-ready{font-size:.76rem;font-weight:700;color:#0d1f35;background:#f0b429;border-radius:100px;padding:5px 12px;opacity:0;transition:opacity .3s}
+.csx-ready.show{opacity:1}
+@media(max-width:620px){
+.csx{padding:16px}
+.csx-body{grid-template-columns:1fr}
+.csx-mid{flex-direction:row;justify-content:center;padding:4px 0}
+.csx-gear svg{animation:none}
+}
+@media(prefers-reduced-motion:reduce){
+.csx-inner{transition:none}
+.csx-gear svg{animation:none}
+.csx-tab.on:before{animation:none;width:calc(100% - 20px)}
+}
+
+.mock-csx{display:flex;justify-content:flex-end;width:100%}
+@media(max-width:960px){.mock-csx{justify-content:center}.csx{margin:0 auto}}
+</style>
 </head>
 <body>
 <!-- MODAL -->
@@ -526,12 +580,80 @@
     <div class="hero-btns"><a href="#" onclick="openModal();return false;" class="btn-gold">Book a Free Process Review</a><a href="#needs" class="btn-ghost">See how we help</a></div>
     <ul class="hx-pts"><li>Free, no-commitment review</li><li>AI &amp; workflow automation</li><li>Data quality built in</li></ul>
   </div>
-  <div class="mock" aria-hidden="true"><div class="win"><div class="win-bar"><i></i><i></i><i></i><span>Monthly performance report</span></div>
-    <div class="win-body"><div class="kp"><div><b>12,480</b><small>Records processed</small></div><div><b>98.6%</b><small>Checks passed</small></div><div><b>Ready</b><small>Report status</small></div></div>
-    <div class="bars"><i style="--h:42%"></i><i style="--h:55%"></i><i style="--h:48%"></i><i style="--h:70%"></i><i style="--h:82%"></i><i style="--h:100%"></i><i style="--h:90%"></i></div><div class="samp">Sample dashboard, illustrative data</div></div></div>
-    <div class="chip">Quality checks passed</div>
-    <div class="flow">Data <s>&#10003;</s> Clean <s>&#10003;</s> QC <s>&#10003;</s> Report <em>refreshing</em></div>
-  </div></div>
+  <div class="mock-csx">
+<div class="csx" id="csx">
+  <div class="csx-top">
+    <span class="csx-title">Your workflow, automated</span>
+    <div class="csx-tabs" id="csxTabs" role="tablist"></div>
+  </div>
+  <div class="csx-stage"><div class="csx-inner" id="csxInner"></div></div>
+</div>
+
+<script>
+(function(){
+var DATA=[
+{n:'Research',full:'Market research',i:['Raw survey data','Questionnaire files','Coding frames','Client specifications'],o:['Analysis-ready datasets','Validated tabulations','QC exception report']},
+{n:'Finance',full:'Accounting and finance',i:['Month-end spreadsheets','Bank and ledger exports','Invoice and expense files','Budget trackers'],o:['Reconciled data','Variance and exception log','Management-ready report']},
+{n:'Sales',full:'Sales and marketing',i:['CRM exports','Campaign reports','Weekly sales sheets','Lead lists'],o:['Unified sales data','Duplicate-free lead lists','Auto-refreshed dashboard']},
+{n:'Operations',full:'Operations and manufacturing',i:['Production logs','Inventory sheets','Supplier files','Shift trackers'],o:['One source of truth','Anomaly alerts','Daily performance report']}
+];
+var DUR=5200,FLIP=900;
+var root=document.getElementById('csx'),tabs=document.getElementById('csxTabs'),inner=document.getElementById('csxInner');
+var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+root.style.setProperty('--csx-t',DUR+'ms');
+var II='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg>';
+var OI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>';
+var GEAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 4.3a1.7 1.7 0 0 1 3.4 0 1.7 1.7 0 0 0 2.6 1.1 1.7 1.7 0 0 1 2.4 2.4 1.7 1.7 0 0 0 1.1 2.6 1.7 1.7 0 0 1 0 3.4 1.7 1.7 0 0 0-1.1 2.6 1.7 1.7 0 0 1-2.4 2.4 1.7 1.7 0 0 0-2.6 1.1 1.7 1.7 0 0 1-3.4 0 1.7 1.7 0 0 0-2.6-1.1 1.7 1.7 0 0 1-2.4-2.4 1.7 1.7 0 0 0-1.1-2.6 1.7 1.7 0 0 1 0-3.4 1.7 1.7 0 0 0 1.1-2.6 1.7 1.7 0 0 1 2.4-2.4 1.7 1.7 0 0 0 2.6-1.1z"/><circle cx="12" cy="12" r="3"/></svg>';
+function item(icon){return '<div class="csx-item">'+icon+'<span></span></div>'}
+function makeFace(back){
+ var el=document.createElement('div');
+ el.className='csx-face'+(back?' back':'');
+ el.innerHTML='<p class="csx-ind"></p><div class="csx-body"><div class="csx-col csx-in"><p class="csx-lbl">Your files</p>'+item(II)+item(II)+item(II)+item(II)+'</div><div class="csx-mid" aria-hidden="true"><div class="csx-gear">'+GEAR+'</div><small>CoreSight</small></div><div class="csx-col csx-out"><p class="csx-lbl">You get</p>'+item(OI)+item(OI)+item(OI)+'</div></div><div class="csx-foot"><div class="csx-steps"><span>Data</span><span>Clean</span><span>QC</span><span>Report</span></div><span class="csx-ready">Ready to send</span></div>';
+ inner.appendChild(el);
+ return {el:el,tm:[]};
+}
+var faces=[makeFace(false),makeFace(true)];
+var cur=0,vis=0,deg=0,flipTm=null;
+var tabEls=DATA.map(function(d,i){var b=document.createElement('button');b.type='button';b.className='csx-tab';b.setAttribute('role','tab');b.textContent=d.n;b.onclick=function(){go(i)};tabs.appendChild(b);return b});
+function paint(f,i){
+ var d=DATA[i],el=f.el;
+ el.querySelector('.csx-ind').textContent=d.full;
+ [].forEach.call(el.querySelectorAll('.csx-in .csx-item span'),function(s,k){s.textContent=d.i[k]});
+ [].forEach.call(el.querySelectorAll('.csx-out .csx-item span'),function(s,k){s.textContent=d.o[k]});
+ f.tm.forEach(clearTimeout);f.tm=[];
+ [].forEach.call(el.querySelectorAll('.csx-steps span'),function(s){s.className=''});
+ el.querySelector('.csx-ready').className='csx-ready';
+}
+function runSteps(f,delay){
+ var st=f.el.querySelectorAll('.csx-steps span'),rd=f.el.querySelector('.csx-ready');
+ [0,600,1200,1800].forEach(function(t,k){f.tm.push(setTimeout(function(){st[k].className='done'},delay+t))});
+ f.tm.push(setTimeout(function(){rd.className='csx-ready show'},delay+2400));
+}
+function markTab(i){
+ tabEls.forEach(function(t,k){t.classList.remove('on');t.setAttribute('aria-selected',k===i)});
+ void root.offsetWidth;
+ tabEls[i].classList.add('on');
+}
+function go(i,first){
+ cur=i;markTab(i);
+ if(first){paint(faces[0],i);runSteps(faces[0],400);return}
+ var hid=faces[1-vis];
+ paint(hid,i);
+ if(reduce){faces[vis].el.style.visibility='hidden';hid.el.style.visibility='visible';deg+=180;inner.style.transform='rotateY('+deg+'deg)';vis=1-vis;runSteps(hid,0);return}
+ deg+=180;
+ inner.style.transform='rotateY('+deg+'deg)';
+ vis=1-vis;
+ runSteps(hid,FLIP-200);
+}
+tabs.addEventListener('animationend',function(e){
+ if(e.target.classList&&e.target.classList.contains('on'))go((cur+1)%DATA.length);
+});
+root.addEventListener('mouseenter',function(){root.classList.add('paused')});
+root.addEventListener('mouseleave',function(){root.classList.remove('paused')});
+go(0,true);
+})();
+</script>
+</div></div>
   <div class="hx-stats"><div class="container"><div class="s"><b>99%</b><small>Accuracy rate</small></div><div class="s"><b>48h</b><small>Average turnaround</small></div><div class="s"><b>400+</b><small>Projects delivered</small></div></div></div>
 </section>
 <!-- TRUST BAR -->
