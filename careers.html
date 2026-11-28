@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Careers at CoreSight Insights & Automation. Join our team working on AI, workflow automation, reporting and quality-checked business solutions." />
+<title>Careers | CoreSight Insights & Automation</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<script src="firebase-config.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0d1f35;--blue:#1e5fa8;--blue-l:#2572c8;--blue-pale:#e8f1fb;--teal-l:#12b093;--gold-l:#f0b429;--off:#f4f7fb;--slate:#556a82;--border:#d4e2f0;--fs:"DM Serif Display",Georgia,serif;--fb:"DM Sans",sans-serif;--r:10px}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);color:var(--navy);background:#fff;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.container{max-width:1000px;margin:0 auto;padding:0 24px}
+a{color:inherit}
+
+/* NAV (same as home page) */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1160px;margin:0 auto;padding:0 28px;height:84px;display:flex;align-items:center;justify-content:space-between}
+.logo-img{height:64px;width:auto;display:block}.logo-link{display:flex;flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:30px;list-style:none}
+.nav-links a,.nav-drop-trigger{font:500 .88rem var(--fb);color:var(--slate);text-decoration:none;white-space:nowrap}
+.nav-links a:hover,.nav-links a.active{color:var(--blue-l)}
+.nav-links a.btn-nav{background:#1a4f8a;color:#fff;padding:10px 24px;border-radius:var(--r);font-weight:600}
+.nav-dropdown{position:relative}
+.nav-drop-trigger{border:0;background:transparent;cursor:pointer;padding:12px 0}
+.nav-drop-menu{display:none;position:absolute;top:calc(100% + 12px);left:-18px;min-width:245px;padding:9px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 14px 38px rgba(13,31,53,.16)}
+.nav-dropdown.open .nav-drop-menu{display:block}
+.nav-drop-menu a{display:block;padding:12px 13px;border-radius:8px;font-size:.86rem}
+.nav-drop-menu a:hover{background:var(--blue-pale)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:12px 6px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--navy);border-radius:2px}
+.nav-more{display:none}
+@media(max-width:1100px){
+.nav-inner{height:72px;padding:0 20px;gap:16px}.logo-img{height:52px}
+.hamburger{display:flex}.nav-links{margin-left:auto;gap:22px}.nav-links .nav-secondary{display:none}
+.nav-more.open{display:flex;flex-direction:column;gap:18px;position:absolute;top:100%;left:0;right:0;background:#fff;padding:22px 24px;border-bottom:1px solid var(--border);box-shadow:0 8px 24px rgba(13,31,53,.1)}
+.nav-more a{font-size:1rem;font-weight:500;color:var(--slate);text-decoration:none}
+.nav-drop-menu{right:0;left:auto}}
+@media(max-width:600px){
+.nav-links{display:none}
+.nav-links.open{display:flex;flex-direction:column;align-items:flex-start;position:absolute;top:100%;left:0;right:0;margin:0;background:#fff;padding:22px 24px;gap:18px;border-bottom:1px solid var(--border);box-shadow:0 8px 24px rgba(13,31,53,.1)}
+.nav-links.open .nav-secondary{display:list-item}.nav-more.open{display:none}
+.nav-dropdown{width:100%}.nav-drop-menu{position:static;box-shadow:none;margin-top:8px;min-width:0}}
+
+/* HERO */
+.hero{background:var(--navy);color:#fff;text-align:center;padding:150px 24px 70px}
+.hero .badge{display:inline-block;background:rgba(37,114,200,.15);border:1px solid rgba(37,114,200,.3);color:#8ec4f8;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:7px 18px;border-radius:100px;margin-bottom:22px}
+.hero h1{font-family:var(--fs);font-weight:400;font-size:clamp(2rem,4vw,2.9rem);line-height:1.15;margin:0 auto 16px;max-width:720px}
+.hero h1 em{font-style:normal;color:var(--teal-l);display:block}
+.hero p{max-width:620px;margin:0 auto 28px;color:rgba(255,255,255,.68);line-height:1.8}
+.btn{display:inline-block;border:0;cursor:pointer;font:700 .95rem var(--fb);padding:13px 28px;border-radius:var(--r);text-decoration:none;transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn-gold{background:var(--gold-l);color:var(--navy)}.btn-blue{background:var(--blue-l);color:#fff}
+.btn-out{background:#fff;color:var(--blue);border:1.5px solid var(--border);padding:10px 20px;font-size:.88rem}
+
+/* JOBS */
+section{padding:64px 0}
+h2{font-family:var(--fs);font-weight:400;font-size:clamp(1.7rem,3.4vw,2.3rem);margin-bottom:8px}
+.sub{color:var(--slate);margin-bottom:26px;line-height:1.7}
+.filters{display:grid;grid-template-columns:1fr 220px;gap:12px;margin-bottom:12px}
+.filters input,.filters select,.f input,.f select,.f textarea{width:100%;font:400 .94rem var(--fb);color:var(--navy);padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--r);background:#fff}
+.filters input:focus,.filters select:focus,.f input:focus,.f select:focus,.f textarea:focus{outline:2px solid var(--blue-l);border-color:transparent}
+.count{font-size:.85rem;color:var(--slate);margin:6px 0 18px}
+.job{background:#fff;border:1px solid var(--border);border-radius:16px;padding:26px 28px;margin-bottom:16px;transition:box-shadow .2s}
+.job:hover,.job.target{box-shadow:0 8px 34px rgba(13,31,53,.10)}
+.job-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.job h3{font-family:var(--fs);font-weight:400;font-size:1.35rem}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.tag{font-size:.74rem;font-weight:600;color:var(--blue);background:var(--blue-pale);padding:5px 12px;border-radius:100px}
+.tag.new{background:#e3f6f2;color:#0e8a72}
+.job p.sum{color:var(--slate);line-height:1.75;font-size:.95rem}
+.det{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.job.open .det{display:block}
+.det h4{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin:14px 0 8px}
+.det ul{padding-left:20px;color:var(--slate);line-height:1.8;font-size:.94rem}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.empty{text-align:center;padding:44px 20px;background:var(--off);border-radius:16px;color:var(--slate);line-height:1.8}
+.open-cta{background:var(--off)}
+.open-cta .box{text-align:center;max-width:640px;margin:0 auto}
+
+/* MODAL */
+.ov{display:none;position:fixed;inset:0;z-index:1200;background:rgba(13,31,53,.6);align-items:flex-start;justify-content:center;overflow-y:auto;padding:30px 14px}
+.ov.open{display:flex}
+.mod{background:#fff;border-radius:18px;width:100%;max-width:560px;padding:30px 28px;position:relative}
+.mod h3{font-family:var(--fs);font-weight:400;font-size:1.5rem;margin-bottom:4px}
+.x{position:absolute;top:14px;right:18px;border:0;background:none;font-size:1.8rem;cursor:pointer;color:var(--slate)}
+.f label{display:block;font-size:.8rem;font-weight:600;margin:14px 0 6px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:.82rem;color:var(--slate);margin:16px 0 4px;line-height:1.5}
+.chk input{width:auto;margin-top:3px}
+.msg{font-size:.86rem;margin-top:12px;min-height:1.2em;color:#b42318}
+.hp{display:none}
+
+footer{background:var(--navy);color:rgba(255,255,255,.65);text-align:center;padding:34px 24px;font-size:.85rem;line-height:1.9}
+footer a{color:#8ec4f8}
+@media(max-width:560px){.filters{grid-template-columns:1fr}}
+@media(max-width:760px){.row{grid-template-columns:1fr}.job{padding:22px 20px}}
+</style>
+</head>
+<body>
+
+<nav id="nav"><div class="nav-inner">
+  <a href="index.html" class="logo-link"><img src="assets/coresight-logo.jpg" alt="CoreSight Insights & Automation" class="logo-img" /></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li class="nav-secondary"><a href="index.html#automation">Automation Solutions</a></li>
+    <li class="nav-dropdown"><button class="nav-drop-trigger" type="button" onclick="this.parentNode.classList.toggle('open')">Industries we serve <span aria-hidden="true">▾</span></button>
+      <div class="nav-drop-menu">
+        <a href="accounting-finance.html">Accounting & Finance</a>
+        <a href="market-research.html">Market Research</a>
+        <a href="sales-marketing.html">Sales & Marketing</a>
+        <a href="operations-manufacturing.html">Operations & Manufacturing</a>
+      </div></li>
+    <li class="nav-secondary"><a href="index.html#about">About</a></li>
+    <li class="nav-secondary"><a href="index.html#why">Why Us</a></li>
+    <li class="nav-secondary"><a href="careers.html" class="active">Careers</a></li>
+    <li><a href="index.html#cta" class="btn-nav">Get in Touch</a></li>
+  </ul>
+  <div class="nav-more" id="navMore">
+    <a href="index.html#automation">Automation Solutions</a><a href="index.html#about">About</a><a href="index.html#why">Why Us</a><a href="careers.html">Careers</a>
+  </div>
+  <div class="hamburger" aria-label="More menu" onclick="document.querySelector('.nav-links').classList.toggle('open');document.getElementById('navMore').classList.toggle('open')"><span></span><span></span><span></span></div>
+</div></nav>
+
+<header class="hero">
+  <div class="badge">Careers at CoreSight</div>
+  <h1>Join the team that makes <em>work easier.</em></h1>
+  <p>At CoreSight, we help businesses replace repetitive manual work with AI, workflow automation and dependable reporting. If you enjoy solving real problems, building smarter processes and doing careful, accurate work, we would like to hear from you.</p>
+  <a href="#openings" class="btn btn-gold">View open positions</a>
+</header>
+
+<section id="openings"><div class="container">
+  <h2>Open positions</h2>
+  <p class="sub">Find a role that fits your skills. Select a job to see the full details, then apply in a minute.</p>
+  <div class="filters">
+    <input type="search" id="q" placeholder="Search by role or skill (e.g. VBA, reporting)" aria-label="Search jobs" />
+    <select id="fType" aria-label="Job type"></select>
+  </div>
+  <div class="count" id="count"></div>
+  <div id="list"></div>
+</div></section>
+
+<section class="open-cta"><div class="container"><div class="box">
+  <h2>Do not see the right role?</h2>
+  <p class="sub">Send us your profile. We keep strong applications on file and contact you when a suitable role opens.</p>
+  <button class="btn btn-blue" onclick="openApply('')">Send a general application</button>
+</div></div></section>
+
+<footer>
+  &copy; 2026 CoreSight Insights & Automation. All rights reserved.<br>
+  Careers enquiries: <a href="mailto:Support@Coresightautomation.com">Support@Coresightautomation.com</a>
+  &nbsp;|&nbsp; <a href="https://www.linkedin.com/company/coresight-insights-automation/" target="_blank" rel="noopener">LinkedIn</a>
+  &nbsp;|&nbsp; <a href="admin.html" style="opacity:.6">Admin</a>
+</footer>
+
+<div class="ov" id="ov" onclick="if(event.target===this)closeApply()">
+  <div class="mod" role="dialog" aria-modal="true" aria-labelledby="mt">
+    <button class="x" onclick="closeApply()" aria-label="Close">&times;</button>
+    <div id="mbody" class="f">
+      <h3 id="mt">Apply now</h3>
+      <p class="sub" style="margin-bottom:0;font-size:.9rem">Fields marked * are required.</p>
+      <label>Position *</label><select id="aPos"></select>
+      <div class="row">
+        <div><label>Full name *</label><input id="aName" type="text" autocomplete="name" /></div>
+        <div><label>Email *</label><input id="aEmail" type="email" autocomplete="email" /></div>
+      </div>
+      <div class="row">
+        <div><label>Phone *</label><input id="aPhone" type="tel" autocomplete="tel" /></div>
+        <div><label>Current location</label><input id="aLoc" type="text" /></div>
+      </div>
+      <div class="row">
+        <div><label>Total experience</label><select id="aExp"><option value="">Select</option><option>Fresher</option><option>0-1 years</option><option>1-3 years</option><option>3-5 years</option><option>5+ years</option></select></div>
+        <div><label>Notice period</label><select id="aNotice"><option value="">Select</option><option>Immediate</option><option>Up to 15 days</option><option>30 days</option><option>60+ days</option></select></div>
+      </div>
+      <label>Upload your resume (PDF, max 5 MB) *</label>
+      <input id="aFile" type="file" accept=".pdf,application/pdf" />
+      <label>Why are you a good fit?</label>
+      <textarea id="aNote" rows="4" placeholder="Share your relevant skills or tools (Excel, VBA, SQL, etc.)"></textarea>
+      <input type="checkbox" id="aBot" class="hp" tabindex="-1" autocomplete="off" />
+      <div class="chk"><input type="checkbox" id="aOk" /><span>I agree that CoreSight may store my details to process this application.</span></div>
+      <div class="msg" id="aMsg" role="alert"></div>
+      <button class="btn btn-blue" id="aBtn" style="width:100%;margin-top:8px" onclick="submitApply()">Submit application</button>
+      <p style="font-size:.78rem;color:var(--slate);text-align:center;margin-top:12px">Prefer email? Send your resume to <a href="mailto:Support@Coresightautomation.com" style="color:var(--blue-l)">Support@Coresightautomation.com</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   HOW TO POST A NEW JOB
+   1. Copy one { ... } block below and paste it inside the JOBS list.
+   2. Give it a unique id (lowercase, hyphens, no spaces).
+   3. Fill in the details. Dates use YYYY-MM-DD.
+   4. Save and upload careers.html. The job appears instantly.
+   To hide or close a job: set active:false, or let the closing date pass.
+   To remove it completely: delete its block.
+   ===================================================================== */
+const JOBS = [
+  {
+    id: "vba-automation-developer",
+    active: true,
+    title: "VBA Automation Developer",
+    dept: "Automation",
+    location: "Pune, India",
+    type: "Full-time",
+    experience: "2-4 years",
+    posted: "2026-11-25",
+    closing: "2026-12-31",
+    summary: "Build Excel and VBA tools that remove manual work from client reporting and data processing.",
+    responsibilities: [
+      "Design and maintain VBA macros and Excel automation tools",
+      "Convert manual reporting steps into reliable, repeatable processes",
+      "Test, document and support tools used by delivery teams"
+    ],
+    requirements: [
+      "Strong working knowledge of Excel VBA and advanced formulas",
+      "Experience with data cleaning and structured reporting",
+      "Clear communication and attention to detail"
+    ]
+  },
+  {
+    id: "data-processing-executive",
+    active: true,
+    title: "Data Processing Executive",
+    dept: "Data Operations",
+    location: "Pune, India",
+    type: "Full-time",
+    experience: "0-2 years",
+    posted: "2026-11-20",
+    closing: "2026-12-20",
+    summary: "Process, clean and validate client datasets accurately and within agreed timelines.",
+    responsibilities: [
+      "Process and validate survey and business datasets",
+      "Follow quality checklists and flag data issues early",
+      "Deliver files in the agreed format and timeline"
+    ],
+    requirements: [
+      "Good Excel skills (lookups, pivots, filters)",
+      "High accuracy and ability to follow detailed instructions",
+      "Any graduate degree"
+    ]
+  },
+  {
+    id: "quality-check-analyst",
+    active: true,
+    title: "Quality Check Analyst",
+    dept: "Data Operations",
+    location: "Remote",
+    type: "Contract",
+    experience: "1-3 years",
+    posted: "2026-11-10",
+    closing: "",
+    summary: "Review deliverables, find errors and help us keep every report and dataset client-ready.",
+    responsibilities: [
+      "Run quality checks on datasets, tables and reports",
+      "Log errors and track corrections to closure",
+      "Suggest checks that can be automated"
+    ],
+    requirements: [
+      "Experience in data QA or market research data checking",
+      "Strong Excel skills; basic VBA or SQL is a plus"
+    ]
+  }
+];
+/* =============================== END OF JOB LIST =============================== */
+
+const FORM_KEY = "f062341b-781c-4e05-8794-9eb2e2329a96"; /* same Web3Forms key as the home page */
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const today = new Date().toISOString().slice(0, 10);
+let live = [];
+const TYPES = ["Full-time", "Contract", "Freelance", "Internship"];
+function setJobs(list) {
+  live = list.filter(j => j.active !== false && (!j.closing || j.closing >= today))
+             .sort((a, b) => (b.posted || "").localeCompare(a.posted || ""));
+  const types = TYPES.slice(); live.forEach(j => { if (j.type && !types.includes(j.type)) types.push(j.type); });
+  $("fType").innerHTML = '<option value="">All job types</option>' + types.map(t => '<option>' + esc(t) + '</option>').join("");
+  render();
+  if (location.hash) {  /* open a job directly from a shared link */
+    const el = $(decodeURIComponent(location.hash.slice(1)));
+    if (el && el.classList.contains("job")) { el.classList.add("open", "target"); el.scrollIntoView({block: "center"}); }
+  }
+}
+
+function isNew(j) { return j.posted && (Date.now() - new Date(j.posted)) / 864e5 <= 14; }
+function ul(a) { return "<ul>" + (a || []).map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>"; }
+
+function render() {
+  const q = $("q").value.trim().toLowerCase(), t = $("fType").value;
+  const rows = live.filter(j =>
+    (!t || j.type === t) &&
+    (!q || [j.title, j.dept, j.summary, (j.requirements || []).join(" ")].join(" ").toLowerCase().includes(q)));
+  $("count").textContent = live.length ? rows.length + " open position" + (rows.length === 1 ? "" : "s") : "";
+  if (!rows.length) {
+    $("list").innerHTML = '<div class="empty">' + (live.length
+      ? "No roles match your search. Try clearing the filters."
+      : "There are no open positions right now. Please send a general application below and we will be in touch when a role opens.") + "</div>";
+    return;
+  }
+  $("list").innerHTML = rows.map(j => `
+    <article class="job" id="${esc(j.id)}">
+      <div class="job-top"><div>
+        <h3>${esc(j.title)}</h3>
+        <div class="tags">${isNew(j) ? '<span class="tag new">New</span>' : ""}
+          <span class="tag">${esc(j.dept)}</span><span class="tag">${esc(j.location)}</span>
+          <span class="tag">${esc(j.type)}</span>${j.experience ? '<span class="tag">' + esc(j.experience) + "</span>" : ""}</div>
+      </div></div>
+      <p class="sum">${esc(j.summary)}</p>
+      <div class="det"><h4>Responsibilities</h4>${ul(j.responsibilities)}<h4>Requirements</h4>${ul(j.requirements)}
+        ${j.closing ? '<p style="margin-top:14px;font-size:.85rem;color:var(--slate)">Apply by ' + esc(j.closing) + "</p>" : ""}</div>
+      <div class="acts">
+        <button class="btn btn-blue" onclick="openApply('${esc(j.id)}')">Apply now</button>
+        <button class="btn btn-out" onclick="toggle('${esc(j.id)}',this)">View details</button>
+        <button class="btn btn-out" onclick="copyLink('${esc(j.id)}',this)">Copy link</button>
+      </div>
+    </article>`).join("");
+}
+function toggle(id, btn) {
+  const el = $(id); el.classList.toggle("open");
+  btn.textContent = el.classList.contains("open") ? "Hide details" : "View details";
+}
+function copyLink(id, btn) {
+  const url = location.origin + location.pathname + "#" + id;
+  (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(
+    () => { btn.textContent = "Link copied"; }, () => { prompt("Copy this link:", url); });
+  setTimeout(() => btn.textContent = "Copy link", 2000);
+}
+["q", "fType"].forEach(id => $(id).addEventListener("input", render));
+$("list").innerHTML = '<div class="empty">Loading open positions...</div>';
+
+/* APPLY FORM */
+function openApply(id) {
+  const opts = live.map(j => '<option value="' + esc(j.title) + '">' + esc(j.title) + "</option>").join("");
+  $("aPos").innerHTML = opts + '<option value="General application">General application</option>';
+  const job = live.find(j => j.id === id);
+  $("aPos").value = job ? job.title : "General application";
+  $("ov").classList.add("open"); document.body.style.overflow = "hidden";
+}
+function closeApply() { $("ov").classList.remove("open"); document.body.style.overflow = ""; }
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeApply(); });
+
+function submitApply() {
+  const v = id => $(id).value.trim(), msg = $("aMsg"), btn = $("aBtn");
+  const data = { position: v("aPos"), name: v("aName"), email: v("aEmail"), phone: v("aPhone"), location: v("aLoc"),
+                 experience: v("aExp"), notice_period: v("aNotice"), message: v("aNote") };
+  const file = $("aFile").files[0];
+  if (!data.name || !data.email || !data.phone) { msg.textContent = "Please fill in all required fields."; return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email)) { msg.textContent = "Please enter a valid email address."; return; }
+  if (!file) { msg.textContent = "Please upload your resume as a PDF."; return; }
+  if (!/\.pdf$/i.test(file.name) || (file.type && file.type !== "application/pdf")) { msg.textContent = "Only PDF files are accepted."; return; }
+  if (file.size > 5 * 1024 * 1024) { msg.textContent = "The file is larger than 5 MB. Please upload a smaller PDF."; return; }
+  if (!$("aOk").checked) { msg.textContent = "Please accept the consent to continue."; return; }
+  msg.textContent = ""; btn.disabled = true; btn.textContent = "Submitting...";
+  const fd = new FormData();
+  fd.append("access_key", FORM_KEY);
+  fd.append("subject", "Job Application: " + data.position);
+  fd.append("from_name", "CoreSight Careers");
+  if ($("aBot").checked) fd.append("botcheck", "true");
+  Object.keys(data).forEach(k => fd.append(k, data[k]));
+  fd.append("attachment", file, file.name);
+  fetch("https://api.web3forms.com/submit", { method: "POST", headers: { "Accept": "application/json" }, body: fd
+  }).then(r => r.json()).then(d => {
+    if (!d.success) throw 0;
+    $("mbody").innerHTML = '<div style="text-align:center;padding:24px 4px"><div style="width:56px;height:56px;border-radius:50%;background:#12b093;color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">&#10003;</div><h3>Application received</h3><p class="sub" style="margin:10px 0 20px">Thank you, ' + esc(data.name) + '. Our team will review your profile and contact you if it is a match.</p><button class="btn btn-blue" onclick="closeApply()">Close</button></div>';
+  }).catch(() => {
+    btn.disabled = false; btn.textContent = "Submit application";
+    msg.innerHTML = 'Could not submit right now. Please email your resume to <a href="mailto:Support@Coresightautomation.com?subject=' + encodeURIComponent("Job Application: " + data.position) + '">Support@Coresightautomation.com</a>.';
+  });
+}
+</script>
+<script type="module">
+const cfg = window.FIREBASE_CONFIG;
+if (!cfg || !cfg.apiKey || cfg.apiKey.startsWith("PASTE")) { setJobs(JOBS); }  /* not connected yet: show the sample list above */
+else {
+  try {
+    const B = "https://www.gstatic.com/firebasejs/10.12.2/";
+    const { initializeApp } = await import(B + "firebase-app.js");
+    const { getFirestore, collection, getDocs } = await import(B + "firebase-firestore.js");
+    const snap = await getDocs(collection(getFirestore(initializeApp(cfg)), "jobs"));
+    setJobs(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+  } catch (e) {
+    console.error(e);
+    $("list").innerHTML = '<div class="empty">We could not load open positions right now. Please refresh, or email us at Support@Coresightautomation.com.</div>';
+  }
+}
+</script>
+</body>
+</html>
