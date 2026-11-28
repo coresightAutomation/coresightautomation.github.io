@@ -19,7 +19,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid #2572c8;border-color:t
 .stat b{display:block;font-size:1.7rem;color:#1e5fa8}.stat small{color:#556a82}
 .row{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;padding:14px 0;border-top:1px solid #e6eef7}.row:first-of-type{border-top:0}
 .row h3{font-size:1rem}.row p{font-size:.82rem;color:#556a82;margin-top:3px}.acts{display:flex;gap:8px;flex-wrap:wrap}
-.pill{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:99px;margin-left:8px}.live{background:#e3f6f2;color:#0e8a72}.off{background:#eef1f5;color:#556a82}.cl{background:#fdecea;color:#b42318}
+.pill{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:99px;margin-left:8px}.live{background:#e3f6f2;color:#0e8a72}.off{background:#eef1f5;color:#556a82}.cl{background:#fdecea;color:#b42318}.app-meta{font-size:.82rem;color:#556a82;line-height:1.6;margin-top:5px}.app-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.app-controls select{width:auto;min-width:145px;padding:8px}.resume-link{font-size:.82rem;color:#1e5fa8;font-weight:700}.empty{color:#556a82;font-size:.9rem;padding:12px 0}
 #login{max-width:400px;margin:90px auto;padding:0 20px}.hide{display:none}
 @media(max-width:640px){.g2,.g3{grid-template-columns:1fr}}
 </style></head><body>
@@ -51,6 +51,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid #2572c8;border-color:t
     </div>
 
     <div class="card"><h2>Posted jobs</h2><div id="list">Loading...</div></div>
+    <div class="card"><h2>Job applications</h2><p style="font-size:.84rem;color:#556a82;margin:-5px 0 12px">Applicant details submitted through the careers page. Candidates email their PDF resumes separately using the application reference.</p><div id="applicationList">Loading applications...</div></div>
   </div>
 </div>
 
@@ -62,13 +63,13 @@ const V = "10.12.2", B = "https://www.gstatic.com/firebasejs/" + V + "/";
 const { initializeApp } = await import(B + "firebase-app.js");
 const AU = await import(B + "firebase-auth.js"), F = await import(B + "firebase-firestore.js");
 const app = initializeApp(cfg), auth = AU.getAuth(app), db = F.getFirestore(app), col = F.collection(db, "jobs");
-let jobs = [], editId = null;
+let jobs = [], applications = [], editId = null;
 const today = () => new Date().toISOString().slice(0, 10);
 const lines = t => t.split("\n").map(x => x.trim()).filter(Boolean);
 
 AU.onAuthStateChanged(auth, u => {
   $("login").classList.toggle("hide", !!u); $("app").classList.toggle("hide", !u);
-  if (u) { $("who").textContent = u.email; reset(); load(); }
+  if (u) { $("who").textContent = u.email; reset(); load(); loadApplications(); }
 });
 $("lbtn").onclick = async () => {
   $("lmsg").textContent = "";
@@ -90,6 +91,50 @@ async function load() {
     draw();
   } catch (e) { $("list").textContent = "Could not load jobs. Check your Firestore rules."; }
 }
+
+const APP_STATUSES = ["New", "Reviewing", "Shortlisted", "Interview", "Rejected", "Hired"];
+async function loadApplications() {
+  const host = $("applicationList");
+  host.textContent = "Loading applications...";
+  try {
+    const snap = await F.getDocs(F.collection(db, "applications"));
+    applications = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => {
+      const ad = a.submittedAt && a.submittedAt.toMillis ? a.submittedAt.toMillis() : 0;
+      const bd = b.submittedAt && b.submittedAt.toMillis ? b.submittedAt.toMillis() : 0;
+      return bd - ad;
+    });
+    await drawApplications();
+  } catch (e) {
+    console.error("Could not load job applications:", e);
+    host.textContent = "Could not load applications. Check Firestore rules and confirm you are logged in with an admin account.";
+  }
+}
+async function drawApplications() {
+  const host = $("applicationList");
+  if (!applications.length) { host.innerHTML = '<div class="empty">No applications received yet.</div>'; return; }
+  const rows = applications.map(a => {
+    const submitted = a.submittedAt && a.submittedAt.toDate ? a.submittedAt.toDate().toLocaleString() : "Just submitted";
+    const resume = 'Match the PDF from the Support inbox using this reference';
+    const options = APP_STATUSES.map(x => '<option value="' + x + '"' + ((a.status || "New") === x ? " selected" : "") + '>' + x + '</option>').join("");
+    return `<div class="row"><div style="min-width:240px;flex:1"><h3>${esc(a.name || "Applicant")}<span class="pill live">${esc(a.status || "New")}</span></h3><div class="app-meta"><b>${esc(a.position || "General application")}</b><br>Reference: <b>${esc(a.id)}</b><br>${esc(a.email || "")} · ${esc(a.phone || "")}<br>${esc(a.location || "Location not provided")} · ${esc(a.experience || "Experience not provided")} · Notice: ${esc(a.notice_period || "Not provided")}<br>Submitted: ${esc(submitted)}<br>Resume: ${esc(a.resumeStatus || "Awaiting email")}<br>${a.message ? 'Note: ' + esc(a.message) + '<br>' : ''}${esc(resume)}</div></div><div class="app-controls"><select data-status-for="${esc(a.id)}">${options}</select><button class="btn o s" data-app-save="${esc(a.id)}">Update status</button></div></div>`;
+  });
+  host.innerHTML = rows.join("");
+}
+$("applicationList").onclick = async e => {
+  const b = e.target.closest("button[data-app-save]"); if (!b) return;
+  const id = b.dataset.appSave, select = $("applicationList").querySelector('[data-status-for="' + id + '"]');
+  if (!select) return;
+  b.disabled = true; b.textContent = "Saving...";
+  try {
+    await F.updateDoc(F.doc(db, "applications", id), { status: select.value });
+    const item = applications.find(x => x.id === id); if (item) item.status = select.value;
+    await drawApplications();
+  } catch (e) {
+    console.error("Could not update application status:", e);
+    alert("Could not update the application. Check Firestore rules.");
+    b.disabled = false; b.textContent = "Update status";
+  }
+};
 const status = j => j.active === false ? ["Hidden", "off"] : (j.closing && j.closing < today() ? ["Closed", "cl"] : ["Live", "live"]);
 function draw() {
   const live = jobs.filter(j => status(j)[0] === "Live").length;

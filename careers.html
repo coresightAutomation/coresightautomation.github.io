@@ -175,15 +175,19 @@ footer a{color:#8ec4f8}
         <div><label>Total experience</label><select id="aExp"><option value="">Select</option><option>Fresher</option><option>0-1 years</option><option>1-3 years</option><option>3-5 years</option><option>5+ years</option></select></div>
         <div><label>Notice period</label><select id="aNotice"><option value="">Select</option><option>Immediate</option><option>Up to 15 days</option><option>30 days</option><option>60+ days</option></select></div>
       </div>
-      <label>Upload your resume (PDF, max 5 MB) *</label>
-      <input id="aFile" type="file" accept=".pdf,application/pdf" />
+      <div style="background:var(--soft,#f3f7fc);border:1px solid var(--line,#d4e2f0);border-radius:10px;padding:12px;font-size:.88rem;line-height:1.55">
+        <b>Resume submission</b><br>
+        To keep applications free to submit, please email your resume (PDF) to
+        <a href="mailto:Support@Coresightautomation.com" style="color:var(--blue-l)">Support@Coresightautomation.com</a>
+        after submitting this form. Your application reference will be provided on screen; include it in your email subject.
+      </div>
       <label>Why are you a good fit?</label>
       <textarea id="aNote" rows="4" placeholder="Share your relevant skills or tools (Excel, VBA, SQL, etc.)"></textarea>
       <input type="checkbox" id="aBot" class="hp" tabindex="-1" autocomplete="off" />
       <div class="chk"><input type="checkbox" id="aOk" /><span>I agree that CoreSight may store my details to process this application.</span></div>
       <div class="msg" id="aMsg" role="alert"></div>
       <button class="btn btn-blue" id="aBtn" style="width:100%;margin-top:8px" onclick="submitApply()">Submit application</button>
-      <p style="font-size:.78rem;color:var(--slate);text-align:center;margin-top:12px">Prefer email? Send your resume to <a href="mailto:Support@Coresightautomation.com" style="color:var(--blue-l)">Support@Coresightautomation.com</a></p>
+      <p style="font-size:.78rem;color:var(--slate);text-align:center;margin-top:12px">No paid upload service is used. Your details are saved securely in CoreSight's application database.</p>
     </div>
   </div>
 </div>
@@ -267,7 +271,6 @@ const JOBS = [
 ];
 /* =============================== END OF JOB LIST =============================== */
 
-const FORM_KEY = "f062341b-781c-4e05-8794-9eb2e2329a96"; /* same Web3Forms key as the home page */
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const today = new Date().toISOString().slice(0, 10);
@@ -342,50 +345,75 @@ function openApply(id) {
 function closeApply() { $("ov").classList.remove("open"); document.body.style.overflow = ""; }
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeApply(); });
 
-function submitApply() {
-  const v = id => $(id).value.trim(), msg = $("aMsg"), btn = $("aBtn");
-  const data = { position: v("aPos"), name: v("aName"), email: v("aEmail"), phone: v("aPhone"), location: v("aLoc"),
-                 experience: v("aExp"), notice_period: v("aNotice"), message: v("aNote") };
-  const file = $("aFile").files[0];
-  if (!data.name || !data.email || !data.phone) { msg.textContent = "Please fill in all required fields."; return; }
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email)) { msg.textContent = "Please enter a valid email address."; return; }
-  if (!file) { msg.textContent = "Please upload your resume as a PDF."; return; }
-  if (!/\.pdf$/i.test(file.name) || (file.type && file.type !== "application/pdf")) { msg.textContent = "Only PDF files are accepted."; return; }
-  if (file.size > 5 * 1024 * 1024) { msg.textContent = "The file is larger than 5 MB. Please upload a smaller PDF."; return; }
-  if (!$("aOk").checked) { msg.textContent = "Please accept the consent to continue."; return; }
-  msg.textContent = ""; btn.disabled = true; btn.textContent = "Submitting...";
-  const fd = new FormData();
-  fd.append("access_key", FORM_KEY);
-  fd.append("subject", "Job Application: " + data.position);
-  fd.append("from_name", "CoreSight Careers");
-  if ($("aBot").checked) fd.append("botcheck", "true");
-  Object.keys(data).forEach(k => fd.append(k, data[k]));
-  fd.append("attachment", file, file.name);
-  fetch("https://api.web3forms.com/submit", { method: "POST", headers: { "Accept": "application/json" }, body: fd
-  }).then(r => r.json()).then(d => {
-    if (!d.success) throw 0;
-    $("mbody").innerHTML = '<div style="text-align:center;padding:24px 4px"><div style="width:56px;height:56px;border-radius:50%;background:#12b093;color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">&#10003;</div><h3>Application received</h3><p class="sub" style="margin:10px 0 20px">Thank you, ' + esc(data.name) + '. Our team will review your profile and contact you if it is a match.</p><button class="btn btn-blue" onclick="closeApply()">Close</button></div>';
-  }).catch(() => {
-    btn.disabled = false; btn.textContent = "Submit application";
-    msg.innerHTML = 'Could not submit right now. Please email your resume to <a href="mailto:Support@Coresightautomation.com?subject=' + encodeURIComponent("Job Application: " + data.position) + '">Support@Coresightautomation.com</a>.';
-  });
-}
+// Firebase-backed application submission is initialized in the module below.
+// The global function keeps the existing button markup and page design unchanged.
+
 </script>
 <script type="module">
 const cfg = window.FIREBASE_CONFIG;
-if (!cfg || !cfg.apiKey || cfg.apiKey.startsWith("PASTE")) { setJobs(JOBS); }  /* not connected yet: show the sample list above */
-else {
-  try {
-    const B = "https://www.gstatic.com/firebasejs/10.12.2/";
-    const { initializeApp } = await import(B + "firebase-app.js");
-    const { getFirestore, collection, getDocs } = await import(B + "firebase-firestore.js");
-    const snap = await getDocs(collection(getFirestore(initializeApp(cfg)), "jobs"));
-    setJobs(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-  } catch (e) {
-    console.error(e);
-    $("list").innerHTML = '<div class="empty">We could not load open positions right now. Please refresh, or email us at Support@Coresightautomation.com.</div>';
-  }
+const B = "https://www.gstatic.com/firebasejs/10.12.2/";
+const $ = id => document.getElementById(id);
+let firebaseReady = false;
+
+try {
+  if (!cfg || !cfg.apiKey || !cfg.projectId) throw new Error("Firebase configuration is incomplete.");
+  const [{ initializeApp }, AU, F] = await Promise.all([
+    import(B + "firebase-app.js"), import(B + "firebase-auth.js"), import(B + "firebase-firestore.js")
+  ]);
+  const app = initializeApp(cfg, "coresight-careers-public");
+  const auth = AU.getAuth(app);
+  const db = F.getFirestore(app);
+  window.__CORE_FIREBASE__ = { app, auth, db, AU, F };
+  firebaseReady = true;
+
+  const snap = await F.getDocs(F.collection(db, "jobs"));
+  setJobs(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+} catch (e) {
+  console.error("CoreSight careers Firebase initialization:", e);
+  if (typeof JOBS !== "undefined") setJobs(JOBS);
 }
+
+window.submitApply = async function submitApply() {
+  const v = id => $(id).value.trim(), msg = $("aMsg"), btn = $("aBtn");
+  const data = {
+    position: v("aPos"), name: v("aName"), email: v("aEmail"), phone: v("aPhone"),
+    location: v("aLoc"), experience: v("aExp"), notice_period: v("aNotice"), message: v("aNote")
+  };
+  if (!data.name || !data.email || !data.phone) { msg.textContent = "Please fill in your name, email and phone number."; return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email)) { msg.textContent = "Please enter a valid email address."; return; }
+  if (!$("aOk").checked) { msg.textContent = "Please accept the consent to continue."; return; }
+  if (!firebaseReady || !window.__CORE_FIREBASE__) {
+    msg.textContent = "The application system is temporarily unavailable. Please try again later or email your details to Support@Coresightautomation.com.";
+    return;
+  }
+  if ($("aBot").checked) return;
+
+  btn.disabled = true; btn.textContent = "Submitting..."; msg.textContent = "";
+  try {
+    const { auth, db, AU, F } = window.__CORE_FIREBASE__;
+    if (!auth.currentUser) await AU.signInAnonymously(auth);
+    const uid = auth.currentUser.uid;
+    const appRef = F.doc(F.collection(db, "applications"));
+    await F.setDoc(appRef, {
+      ...data,
+      uid,
+      status: "New",
+      resumeStatus: "Awaiting email",
+      submittedAt: F.serverTimestamp()
+    });
+    const ref = appRef.id;
+    $("mbody").innerHTML = '<div style="text-align:center;padding:24px 4px"><div style="width:56px;height:56px;border-radius:50%;background:#12b093;color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">&#10003;</div><h3>Application received</h3><p class="sub" style="margin:10px 0 12px">Thank you, ' + esc(data.name) + '. Your application details have been submitted successfully.</p><p style="font-weight:700;margin:10px 0">Application reference: ' + esc(ref) + '</p><p class="sub" style="margin:10px 0 18px">Please email your PDF resume to <b>Support@Coresightautomation.com</b> and include this reference in the subject line.</p><a class="btn btn-blue" style="display:inline-block;text-decoration:none" href="mailto:Support@Coresightautomation.com?subject=' + encodeURIComponent('Resume for application ' + ref) + '&body=' + encodeURIComponent('Application reference: ' + ref + '\nName: ' + data.name + '\nPosition: ' + data.position + '\nPlease attach your PDF resume.') + '">Email my resume</a><p style="margin-top:12px"><button class="btn btn-blue" onclick="closeApply()">Close</button></p></div>';
+  } catch (e) {
+    console.error("CoreSight application submission failed:", e);
+    btn.disabled = false; btn.textContent = "Submit application";
+    const code = e && e.code ? e.code : "";
+    let explanation = "We could not submit your application. Please try again or email Support@Coresightautomation.com.";
+    if (code === "permission-denied") explanation = "The application database rules need to be updated. Please contact the website administrator.";
+    else if (code === "auth/operation-not-allowed") explanation = "Anonymous sign-in is not enabled in Firebase Authentication yet.";
+    else if (code === "unavailable" || code === "network-request-failed") explanation = "Network connection problem. Please check your internet connection and try again.";
+    msg.textContent = explanation;
+  }
+};
 </script>
 </body>
 </html>

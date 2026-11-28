@@ -1,4 +1,4 @@
-/* Firebase web-app settings. Used by careers.html and admin.html. */
+/* CoreSight Firebase web-app settings. Spark-plan compatible: no Storage bucket required. */
 window.FIREBASE_CONFIG = {
   apiKey: "AIzaSyARiT-8wL7-WqVMac8IDrdN4IyHBeVQdCU",
   authDomain: "coresight-1e123.firebaseapp.com",
