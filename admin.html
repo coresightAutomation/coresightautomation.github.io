@@ -51,7 +51,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid #2572c8;border-color:t
     </div>
 
     <div class="card"><h2>Posted jobs</h2><div id="list">Loading...</div></div>
-    <div class="card"><h2>Job applications</h2><p style="font-size:.84rem;color:#556a82;margin:-5px 0 12px">Applicant details submitted through the careers page. Candidates email their PDF resumes separately using the application reference.</p><div id="applicationList">Loading applications...</div></div>
+    <div class="card"><h2>Job applications</h2><p style="font-size:.84rem;color:#556a82;margin:-5px 0 12px">Applicant information extracted from CVs in the candidate's browser. Original CV files are not uploaded or retained.</p><div id="applicationList">Loading applications...</div></div>
   </div>
 </div>
 
@@ -114,9 +114,8 @@ async function drawApplications() {
   if (!applications.length) { host.innerHTML = '<div class="empty">No applications received yet.</div>'; return; }
   const rows = applications.map(a => {
     const submitted = a.submittedAt && a.submittedAt.toDate ? a.submittedAt.toDate().toLocaleString() : "Just submitted";
-    const resume = 'Match the PDF from the Support inbox using this reference';
     const options = APP_STATUSES.map(x => '<option value="' + x + '"' + ((a.status || "New") === x ? " selected" : "") + '>' + x + '</option>').join("");
-    return `<div class="row"><div style="min-width:240px;flex:1"><h3>${esc(a.name || "Applicant")}<span class="pill live">${esc(a.status || "New")}</span></h3><div class="app-meta"><b>${esc(a.position || "General application")}</b><br>Reference: <b>${esc(a.id)}</b><br>${esc(a.email || "")} · ${esc(a.phone || "")}<br>${esc(a.location || "Location not provided")} · ${esc(a.experience || "Experience not provided")} · Notice: ${esc(a.notice_period || "Not provided")}<br>Submitted: ${esc(submitted)}<br>Resume: ${esc(a.resumeStatus || "Awaiting email")}<br>${a.message ? 'Note: ' + esc(a.message) + '<br>' : ''}${esc(resume)}</div></div><div class="app-controls"><select data-status-for="${esc(a.id)}">${options}</select><button class="btn o s" data-app-save="${esc(a.id)}">Update status</button></div></div>`;
+    return `<div class="row"><div style="min-width:240px;flex:1"><h3>${esc(a.name || "Applicant")}<span class="pill live">${esc(a.status || "New")}</span></h3><div class="app-meta"><b>${esc(a.position || "General application")}</b><br>Reference: <b>${esc(a.id)}</b><br>${esc(a.email || "")} · ${esc(a.phone || "")}<br>${esc(a.location || "Location not provided")} · ${esc(a.experience || "Experience not provided")} · Notice: ${esc(a.notice_period || "Not provided")}<br>Submitted: ${esc(submitted)}<br>Education: ${esc(a.education || "Not provided")}<br>Skills: ${esc(a.skills || "Not provided")}<br>CV parsing: ${a.resumeParsed ? "CV details extracted" : "Manual application"}<br>${a.message ? 'Note: ' + esc(a.message) + '<br>' : ''}</div></div><div class="app-controls"><select data-status-for="${esc(a.id)}">${options}</select><button class="btn o s" data-app-save="${esc(a.id)}">Update status</button></div></div>`;
   });
   host.innerHTML = rows.join("");
 }

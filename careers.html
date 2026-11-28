@@ -175,14 +175,20 @@ footer a{color:#8ec4f8}
         <div><label>Total experience</label><select id="aExp"><option value="">Select</option><option>Fresher</option><option>0-1 years</option><option>1-3 years</option><option>3-5 years</option><option>5+ years</option></select></div>
         <div><label>Notice period</label><select id="aNotice"><option value="">Select</option><option>Immediate</option><option>Up to 15 days</option><option>30 days</option><option>60+ days</option></select></div>
       </div>
-      <div style="background:var(--soft,#f3f7fc);border:1px solid var(--line,#d4e2f0);border-radius:10px;padding:12px;font-size:.88rem;line-height:1.55">
-        <b>Resume submission</b><br>
-        To keep applications free to submit, please email your resume (PDF) to
-        <a href="mailto:Support@Coresightautomation.com" style="color:var(--blue-l)">Support@Coresightautomation.com</a>
-        after submitting this form. Your application reference will be provided on screen; include it in your email subject.
+      <div style="background:var(--soft,#f3f7fc);border:1px solid var(--line,#d4e2f0);border-radius:10px;padding:14px;font-size:.9rem;line-height:1.55">
+        <b style="display:block;margin-bottom:5px">Apply faster with your CV</b>
+        Upload a PDF or Word document. We'll extract available details in your browser and fill in this form for you. Please review everything before submitting.
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px">
+          <input id="aResume" type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="max-width:100%;font-size:.82rem">
+          <span id="resumeParseMsg" role="status" style="font-size:.82rem;color:var(--slate)">PDF or DOCX · Maximum 5 MB · File is not uploaded or stored</span>
+        </div>
+      </div>
+      <div class="row">
+        <div><label>Education</label><input id="aEducation" type="text" placeholder="e.g. B.Com, MBA" /></div>
+        <div><label>Technical skills</label><input id="aSkills" type="text" placeholder="e.g. Excel, VBA, SQL" /></div>
       </div>
       <label>Why are you a good fit?</label>
-      <textarea id="aNote" rows="4" placeholder="Share your relevant skills or tools (Excel, VBA, SQL, etc.)"></textarea>
+      <textarea id="aNote" rows="4" placeholder="Share a little about your relevant experience and strengths."></textarea>
       <input type="checkbox" id="aBot" class="hp" tabindex="-1" autocomplete="off" />
       <div class="chk"><input type="checkbox" id="aOk" /><span>I agree that CoreSight may store my details to process this application.</span></div>
       <div class="msg" id="aMsg" role="alert"></div>
@@ -345,6 +351,86 @@ function openApply(id) {
 function closeApply() { $("ov").classList.remove("open"); document.body.style.overflow = ""; }
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeApply(); });
 
+// Resume parsing runs locally in the candidate's browser. The original file is never uploaded.
+const resumeInput = document.getElementById("aResume");
+const resumeMsg = document.getElementById("resumeParseMsg");
+let resumeWasParsed = false;
+const setField = (id, value) => { if (value) document.getElementById(id).value = value; };
+function extractResumeFields(text) {
+  const clean = text.replace(/\r/g, "\n").replace(/[\t\u00a0]+/g, " ").replace(/ +/g, " ");
+  const lines = clean.split("\n").map(x => x.trim()).filter(Boolean);
+  const email = (clean.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i) || [])[0] || "";
+  const phoneMatch = clean.match(/(?:\+?\d[\d ()-]{7,}\d)/);
+  const phone = phoneMatch ? phoneMatch[0].replace(/[() -]/g, "").slice(0, 20) : "";
+  const skipName = /resume|curriculum vitae|profile|contact|objective|summary|experience|education|skills|linkedin|github|email|phone|mobile|address/i;
+  let name = "";
+  for (const line of lines.slice(0, 12)) {
+    const candidate = line.replace(/\s{2,}/g, " ").trim();
+    if (candidate.length < 3 || candidate.length > 55 || skipName.test(candidate) || /[@\d:/\\]/.test(candidate) || candidate.split(/\s+/).length > 5) continue;
+    if (/^[A-Za-z][A-Za-z .'-]+$/.test(candidate) && candidate.split(/\s+/).length >= 2) { name = candidate; break; }
+  }
+  let location = "";
+  const locMatch = clean.match(/(?:current location|location|based in|address)\s*[:|-]\s*([^\n]{2,90})/i);
+  if (locMatch) location = locMatch[1].split(/[|;]/)[0].trim().slice(0, 100);
+  if (!location) {
+    const cities = ["Pune","Mumbai","Bengaluru","Bangalore","Hyderabad","Chennai","Delhi","New Delhi","Noida","Gurugram","Gurgaon","Ahmedabad","Kolkata","Jaipur","Indore","Nagpur","Nashik","Thane","Coimbatore"];
+    location = cities.find(city => new RegExp("\\b" + city.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i").test(clean)) || "";
+  }
+  const expMatch = clean.match(/(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)(?:\s+of)?\s+(?:experience|exp)/i) || clean.match(/(?:experience|work experience)[^\n]{0,35}?(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)/i) || clean.match(/(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)/i);
+  let experience = "";
+  if (expMatch) { const n = Number(expMatch[1]); experience = n >= 5 ? "5+ years" : n >= 3 ? "3-5 years" : n >= 1 ? "1-3 years" : "0-1 years"; }
+  else if (/fresher|recent graduate|no experience/i.test(clean)) experience = "Fresher";
+  const skillBank = ["Advanced Excel","Microsoft Excel","Excel","VBA","SQL","Power BI","Tableau","Python","R programming","SPSS","SAS","PowerPoint","Microsoft Office","Word","Access","JavaScript","HTML","CSS","Power Query","Power Pivot","Pivot Tables","Data Analysis","Data Processing","Market Research","Automation","MIS Reporting","Data Visualization","Google Sheets","Salesforce","CRM"];
+  const skills = skillBank.filter(skill => new RegExp("\\b" + skill.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i").test(clean));
+  const educationLine = lines.find(line => /\b(B\.?Com|B\.?A\.?|B\.?Sc|B\.?B\.?A|B\.?C\.?A|B\.?E\.?|B\.?Tech|M\.?Com|M\.?A\.?|M\.?Sc|M\.?B\.?A|M\.?C\.?A|M\.?Tech|MBA|BCA|MCA|Bachelor|Master|Diploma|Ph\.?D)\b/i.test(line));
+  const noticeMatch = clean.match(/(?:notice period|notice)\s*[:|-]\s*(immediate|\d+\s*days?|\d+\s*months?)/i);
+  let notice = "";
+  if (noticeMatch) { const n = noticeMatch[1].toLowerCase(); notice = /immediate/.test(n) ? "Immediate" : /15/.test(n) ? "Up to 15 days" : /30|1 month/.test(n) ? "30 days" : "60+ days"; }
+  return { name, email, phone, location, experience, skills: skills.join(", "), education: educationLine || "", notice };
+}
+resumeInput.addEventListener("change", async () => {
+  resumeWasParsed = false;
+  const file = resumeInput.files && resumeInput.files[0];
+  if (!file) return;
+  resumeMsg.style.color = "var(--slate)";
+  if (file.size > 5 * 1024 * 1024) { resumeMsg.textContent = "Please choose a file smaller than 5 MB."; resumeInput.value = ""; return; }
+  const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+  const isDocx = /\.docx$/i.test(file.name) || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  if (!isPdf && !isDocx) { resumeMsg.textContent = "Unsupported file. Please upload a PDF or DOCX file."; resumeInput.value = ""; return; }
+  resumeMsg.textContent = "Reading your CV locally...";
+  try {
+    let text = "";
+    if (isPdf) {
+      const pdfjs = await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs");
+      pdfjs.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+      const pdf = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+      const pages = [];
+      for (let i = 1; i <= Math.min(pdf.numPages, 15); i++) {
+        const page = await pdf.getPage(i), content = await page.getTextContent();
+        pages.push(content.items.map(item => item.str || "").join(" "));
+      }
+      text = pages.join("\n");
+    } else {
+      const mammoth = await import("https://cdn.jsdelivr.net/npm/mammoth@1.9.0/+esm");
+      const result = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
+      text = result.value || "";
+    }
+    if (text.trim().length < 40) throw new Error("No selectable text found. This may be a scanned/image-only CV.");
+    const fields = extractResumeFields(text);
+    resumeWasParsed = true;
+    setField("aName", fields.name); setField("aEmail", fields.email); setField("aPhone", fields.phone);
+    setField("aLoc", fields.location); setField("aExp", fields.experience); setField("aNotice", fields.notice);
+    setField("aSkills", fields.skills); setField("aEducation", fields.education);
+    const filled = [fields.name, fields.email, fields.phone, fields.location, fields.experience, fields.skills, fields.education].filter(Boolean).length;
+    resumeMsg.style.color = "#0e8a72";
+    resumeMsg.textContent = filled ? "CV read successfully. " + filled + " details filled where detected. Please review and complete any missing fields." : "CV text was read, but contact details could not be confidently identified. Please complete the form manually.";
+  } catch (err) {
+    console.error("Resume parsing failed:", err);
+    resumeMsg.style.color = "#b42318";
+    resumeMsg.textContent = err.message && err.message.includes("scanned") ? err.message + " Please enter your details manually." : "Could not read this CV. Please try another PDF/DOCX or enter details manually.";
+  }
+});
+
 // Firebase-backed application submission is initialized in the module below.
 // The global function keeps the existing button markup and page design unchanged.
 
@@ -377,7 +463,8 @@ window.submitApply = async function submitApply() {
   const v = id => $(id).value.trim(), msg = $("aMsg"), btn = $("aBtn");
   const data = {
     position: v("aPos"), name: v("aName"), email: v("aEmail"), phone: v("aPhone"),
-    location: v("aLoc"), experience: v("aExp"), notice_period: v("aNotice"), message: v("aNote")
+    location: v("aLoc"), experience: v("aExp"), notice_period: v("aNotice"),
+    education: v("aEducation"), skills: v("aSkills"), message: v("aNote")
   };
   if (!data.name || !data.email || !data.phone) { msg.textContent = "Please fill in your name, email and phone number."; return; }
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email)) { msg.textContent = "Please enter a valid email address."; return; }
@@ -398,11 +485,11 @@ window.submitApply = async function submitApply() {
       ...data,
       uid,
       status: "New",
-      resumeStatus: "Awaiting email",
+      resumeParsed: resumeWasParsed,
       submittedAt: F.serverTimestamp()
     });
     const ref = appRef.id;
-    $("mbody").innerHTML = '<div style="text-align:center;padding:24px 4px"><div style="width:56px;height:56px;border-radius:50%;background:#12b093;color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">&#10003;</div><h3>Application received</h3><p class="sub" style="margin:10px 0 12px">Thank you, ' + esc(data.name) + '. Your application details have been submitted successfully.</p><p style="font-weight:700;margin:10px 0">Application reference: ' + esc(ref) + '</p><p class="sub" style="margin:10px 0 18px">Please email your PDF resume to <b>Support@Coresightautomation.com</b> and include this reference in the subject line.</p><a class="btn btn-blue" style="display:inline-block;text-decoration:none" href="mailto:Support@Coresightautomation.com?subject=' + encodeURIComponent('Resume for application ' + ref) + '&body=' + encodeURIComponent('Application reference: ' + ref + '\nName: ' + data.name + '\nPosition: ' + data.position + '\nPlease attach your PDF resume.') + '">Email my resume</a><p style="margin-top:12px"><button class="btn btn-blue" onclick="closeApply()">Close</button></p></div>';
+    $("mbody").innerHTML = '<div style="text-align:center;padding:24px 4px"><div style="width:56px;height:56px;border-radius:50%;background:#12b093;color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">&#10003;</div><h3>Application received</h3><p class="sub" style="margin:10px 0 12px">Thank you, ' + esc(data.name) + '. Your application details have been submitted successfully.</p><p style="font-weight:700;margin:10px 0">Application reference: ' + esc(ref) + '</p><p class="sub" style="margin:10px 0 18px">Your application details have been saved. The CV file itself was not uploaded or stored; only the information extracted from it is retained.</p><p style="margin-top:12px"><button class="btn btn-blue" onclick="closeApply()">Close</button></p></div>';
   } catch (e) {
     console.error("CoreSight application submission failed:", e);
     btn.disabled = false; btn.textContent = "Submit application";
