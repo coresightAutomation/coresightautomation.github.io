@@ -449,6 +449,36 @@
     .cs-industry-card:hover{transform:translateY(-5px);box-shadow:0 14px 34px rgba(13,31,53,.2)}
     .cs-industry-card:focus-visible,.nav-drop-trigger:focus-visible{outline:3px solid var(--gold-l);outline-offset:4px}
     @media(max-width:600px){.nav-dropdown{width:100%}.nav-drop-trigger{font-size:.95rem;padding:0}.nav-drop-menu{position:static;box-shadow:none;margin-top:8px;min-width:0}.nav-dropdown.open .nav-drop-menu{display:block}}
+  
+    /* ===== NAV FIX: tablet + "Desktop site" mode on phones (viewport ~980-1100px) ===== */
+    .nav-links > li { white-space: nowrap; }
+    .nav-links a, .nav-drop-trigger { white-space: nowrap; }
+    .logo-link { flex-shrink: 0; }
+    .hx > *, .hero-inner > * { min-width: 0; }
+    @media (min-width: 1101px) and (max-width: 1240px) {
+      .nav-links { gap: 20px; }
+      .nav-links a, .nav-drop-trigger { font-size: .82rem; }
+      .btn-nav, .nav-links a.btn-nav { padding: 9px 16px; }
+    }
+    @media (max-width: 1100px) {
+      .nav-inner { height: 72px; padding: 0 20px; }
+      .logo-img { height: 52px; }
+      .hamburger { display: flex; padding: 12px 6px; }
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex; flex-direction: column; align-items: flex-start;
+        position: absolute; top: 100%; left: 0; right: 0;
+        background: #fff; padding: 22px 24px; gap: 18px;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 8px 24px rgba(13,31,53,.1);
+        max-height: calc(100vh - 72px); overflow-y: auto;
+      }
+      .nav-links.open a { font-size: 1rem; }
+      .nav-dropdown { width: 100%; }
+      .nav-drop-trigger { font-size: 1rem; padding: 0; }
+      .nav-drop-menu { position: static; box-shadow: none; margin-top: 8px; min-width: 0; }
+      #hero { padding-top: 72px; }
+    }
   </style>
 <style>/* hero workflow rotator */
 .csx{width:100%;max-width:580px;font-family:'DM Sans',sans-serif;color:#fff;background:rgba(22,45,74,.75);border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:20px 22px 18px}
@@ -901,10 +931,21 @@ go(0,true);
   });
   function toggleMenu(el) {
     el.classList.toggle("open");
-    var links = document.querySelector(".nav-links");
-    var open = links.style.display === "flex";
-    links.style.cssText = open ? "" : "display:flex;flex-direction:column;position:absolute;top:72px;left:0;right:0;background:#fff;padding:24px 28px;gap:20px;border-bottom:1px solid #d4e2f0;z-index:998;box-shadow:0 8px 24px rgba(13,31,53,.1);";
+    document.querySelector(".nav-links").classList.toggle("open");
   }
+  document.addEventListener("click", function(e){
+    var a = e.target.closest(".nav-links a");
+    if (a) {
+      document.querySelector(".nav-links").classList.remove("open");
+      var h = document.querySelector(".hamburger"); if (h) h.classList.remove("open");
+    }
+  });
+  window.addEventListener("resize", function(){
+    if (window.innerWidth > 1100) {
+      document.querySelector(".nav-links").classList.remove("open");
+      var h = document.querySelector(".hamburger"); if (h) h.classList.remove("open");
+    }
+  });
   const ro = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); ro.unobserve(e.target); } });
   }, { threshold: 0.1 });
